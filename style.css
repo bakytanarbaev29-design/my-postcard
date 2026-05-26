@@ -1,1 +1,121 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
 
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+.active {
+    opacity: 1 !important;
+    z-index: 10 !important;
+}
+
+/* Элементы Матрицы */
+#matrix-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+#matrix-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+}
+
+/* СТИЛЬ ЦЕНТРАЛЬНОГО ТЕКСТА: Без неона, чистый розовый */
+#matrix-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 3.2rem;
+    font-weight: bold;
+    color: #db2777;
+    line-height: 1.4;
+    letter-spacing: 6px;
+    text-align: center;
+}
+
+/* Галерея и финальный экран */
+#gallery-screen, #heart-screen {
+    background-color: #fdf2f8;
+    color: #333333;
+}
+
+.card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    cursor: pointer;
+    text-align: center;
+    max-width: 85%;
+}
+
+.card img {
+    max-width: 100%;
+    width: 280px;
+    height: 380px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.card p {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #db2777;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+#heart-screen h2 {
+    color: #db2777;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 0 10px;
+}
+
+.heart-collage {
+    width: 320px;
+    height: 320px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+    clip-path: path('M160,90 C160,90 133.3,42.6 80,42.6 C35.8,42.6 0,78.5 0,122.6 C0,197.3 160,277.3 160,277.3 C160,277.3 320,197.3 320,122.6 C320,78.5 284.2,42.6 240,42.6 C186.7,42.6 160,90 160,90 Z');
+}
+
+.heart-collage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
