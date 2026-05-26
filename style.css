@@ -1,1 +1,193 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
 
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+.active {
+    opacity: 1 !important;
+    z-index: 10 !important;
+}
+
+/* Матрица */
+#matrix-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+#matrix-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 20px;
+}
+
+#matrix-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 3.2rem;
+    font-weight: bold;
+    color: #db2777;
+    line-height: 1.4;
+    letter-spacing: 6px;
+}
+
+/* ЭКРАН 2: АНИМАЦИЯ 3D КНИГИ */
+#gallery-screen {
+    background-color: #fdf2f8;
+}
+
+.book-container {
+    width: 85vw;
+    max-width: 500px;
+    height: 60vw;
+    max-height: 360px;
+    position: relative;
+    perspective: 1500px; /* Создает 3D глубину */
+}
+
+.book {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    right: 0; /* Закрепляем книгу на правой стороне, чтобы она раскрывалась влево */
+    transform-style: preserve-3d;
+}
+
+.page {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: left center; /* Страница крутится вокруг левой оси (переплет) */
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    cursor: pointer;
+}
+
+.page .front, .page .back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden; /* Скрывает изнанку страницы при повороте */
+    background: #ffffff;
+    box-shadow: inset 4px 0 10px rgba(0,0,0,0.05), 5px 5px 15px rgba(0,0,0,0.1);
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page .front {
+    border-radius: 0 12px 12px 0;
+}
+
+.page .back {
+    transform: rotateY(180deg); /* Разворачивает заднюю текстуру */
+    border-radius: 12px 0 0 12px;
+}
+
+.page img {
+    width: 100%;
+    height: 85%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.page-footer {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #db2777;
+    text-align: center;
+}
+
+.font-suprise {
+    animation: pulseText 1s infinite alternate;
+}
+
+/* Управление слоями страниц при перелистывании */
+#p1 { z-index: 2; }
+#p2 { z-index: 1; }
+
+#p1.flipped { transform: rotateY(-180deg); z-index: 1; }
+#p2.flipped { transform: rotateY(-180deg); z-index: 2; }
+
+
+/* ЭКРАН 3: СЕРДЕЧНЫЙ КОЛЛАЖ (8 ФОТО) */
+#heart-screen {
+    background-color: #fdf2f8;
+}
+
+#heart-screen h2 {
+    color: #db2777;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.heart-collage {
+    width: 330px;
+    height: 330px;
+    display: grid;
+    /* 4 колонки и 2 ряда идеально вмещают 8 фотографий */
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 6px;
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    /* Маска сердца */
+    clip-path: path('M165,90 C165,90 137.5,42.6 82.5,42.6 C36.9,42.6 0,78.5 0,122.6 C0,197.3 165,277.3 165,277.3 C165,277.3 330,197.3 330,122.6 C330,78.5 293.1,42.6 247.5,42.6 C192.5,42.6 165,90 165,90 Z');
+    animation: heartBeat 2.5s infinite ease-in-out;
+}
+
+.heart-collage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+/* Анимации */
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+}
+
+@keyframes pulseText {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.08); }
+}
