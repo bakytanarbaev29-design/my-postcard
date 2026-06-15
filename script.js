@@ -1,4 +1,4 @@
-// --- ЛОГИКА МУЗЫКИ ---
+// --- ЛОГИКА МУЗЫКИ (AUTOPLAY + FALLBACK) ---
 document.addEventListener('DOMContentLoaded', () => {
     const music = document.getElementById('bg-music');
     const musicBtn = document.getElementById('music-toggle');
@@ -6,19 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (music && musicBtn) {
         music.volume = 0.5; // Комфортная громкость 50%
 
-        // 1. ПЫТАЕМСЯ ЗАПУСТИТЬ СРАЗУ ПРИ ЗАГРУЗКЕ КОДА
+        // 1. Попытка запустить трек сразу при загрузке
         const playPromise = music.play();
         if (playPromise !== undefined) {
             playPromise.then(() => {
-                // Если браузер разрешил (редкость) — музыка играет
+                // Если браузер разрешил — супер!
                 musicBtn.classList.remove('muted');
                 musicBtn.classList.add('playing');
             }).catch(error => {
-                // Если браузер заблокировал звук — ничего страшного, ждем касания
-                console.log("Браузер заблокировал автоплей. Ждем первого касания экрана.");
+                // Если заблокировал — не страшно, ждем первого касания
+                console.log("Браузер заблокировал автоплей. Ждем первого клика.");
             });
         }
 
+        // Функция ручного переключения музыки
         function toggleMusic() {
             if (music.paused) {
                 music.play().then(() => {
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleMusic();
         });
 
-        // 2. СТРАХОВКА: Включаем музыку при самом первом касании экрана
+        // 2. Страховка: Включаем музыку при самом первом касании экрана
         const startMusicOnInteraction = () => {
             if (music.paused) {
                 music.play().then(() => {
@@ -50,22 +51,22 @@ document.addEventListener('DOMContentLoaded', () => {
             document.removeEventListener('touchstart', startMusicOnInteraction);
         };
 
-        // Ловим любой клик или свайп по экрану
         document.addEventListener('click', startMusicOnInteraction);
         document.addEventListener('touchstart', startMusicOnInteraction);
     }
 });
 
-// --- ВАША ЛОГИКА ОТКРЫТКИ ---
+// --- ЛОГИКА ОТКРЫТКИ ---
 let bookStep = 0;
 
 const TEXTS = {
-    cover: "Для Малахат! Нажми, чтобы открыть книгу воспоминаний... ✨",
-    page1Back: "Каждый день рядом с тобой приносит невероятную радость и тепло. 💕",
-    page2Front: "Ты заставляешь этот мир сиять ярче, и я благодарен за каждый миг! 🌸",
-    page2Back: "Пусть все твои самые заветные желания обязательно сбудутся. С праздником! 🎉❤️"
+    cover: "Для Малахат! Нажми, чтобы открыть книгу... ✨",
+    spread1: "Каждый день рядом с тобой приносит невероятную радость и тепло. 💕",
+    spread2: "Ты заставляешь этот мир сиять ярче, и я благодарен за каждый миг! 🌸",
+    closing: "Пусть все твои самые заветные желания обязательно сбудутся. С праздником! 🎉❤️"
 };
 
+// Функция печатной машинки
 function typeWriter(elementId, text, speed = 40) {
     const element = document.getElementById(elementId);
     if (!element) return;
@@ -77,7 +78,11 @@ function typeWriter(elementId, text, speed = 40) {
     
     element.typewriterInterval = setInterval(() => {
         if (i < text.length) {
-            element.innerHTML += text.charAt(i);
+            if (text.charAt(i) === '\n') {
+                element.innerHTML += '<br>';
+            } else {
+                element.innerHTML += text.charAt(i);
+            }
             i++;
         } else {
             clearInterval(element.typewriterInterval);
@@ -85,98 +90,70 @@ function typeWriter(elementId, text, speed = 40) {
     }, speed);
 }
 
+// Логика перелистывания книги (3 клика)
 window.turnPage = function() {
     const p1 = document.getElementById('p1');
     const p2 = document.getElementById('p2');
+    const p3 = document.getElementById('p3'); 
     const book = document.getElementById('book');
+    const sharedText = document.getElementById('shared-text');
     
     if (bookStep === 0) {
+        // Клик 1: Открываем разворот 1
         if (book) book.classList.add('opened');
         if (p1) p1.classList.add('flipped');
         bookStep = 1;
         
         setTimeout(() => {
-            typeWriter('text-p1-back', TEXTS.page1Back, 40);
-            typeWriter('text-p2-front', TEXTS.page2Front, 40);
-        }, 500);
+            typeWriter('shared-text', TEXTS.spread1, 40);
+        }, 800);
 
     } else if (bookStep === 1) {
+        // Клик 2: Разворот 2
         if (p2) p2.classList.add('flipped');
         bookStep = 2;
         
         setTimeout(() => {
-            typeWriter('text-p2-back', TEXTS.page2Back, 40);
-        }, 500);
+            typeWriter('shared-text', TEXTS.spread2, 40);
+        }, 800);
 
     } else if (bookStep === 2) {
-        const galleryScreen = document.getElementById('gallery-screen');
-        const heartScreen = document.getElementById('heart-screen');
+        // Клик 3: Закрываем книгу
+        if (p3) p3.classList.add('flipped');
+        bookStep = 3;
         
-        if (galleryScreen && heartScreen) {
-            galleryScreen.style.display = 'none';
-            heartScreen.classList.replace('hidden', 'active');
-        }
+        if (sharedText) sharedText.classList.remove('visible');
+        
+        // Переход на экран сердца
+        setTimeout(() => {
+            const galleryScreen = document.getElementById('gallery-screen');
+            const heartScreen = document.getElementById('heart-screen');
+            
+            if (galleryScreen && heartScreen) {
+                galleryScreen.classList.replace('active', 'hidden');
+                heartScreen.classList.replace('hidden', 'active');
+            }
+        }, 1200);
     }
 };
 
+// --- ЛОГИКА АНИМАЦИИ ОТСЧЕТА И ВСТУПИТЕЛЬНОГО ТЕКСТА ---
 document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('matrix-canvas');
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const matrixMessage = "HAPPY BIRTHDAY TO MALAKHAT ";
-    const fontSize = 16;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops = [];
-
-    for (let x = 0; x < columns; x++) {
-        drops[x] = Math.random() * -100;
-    }
-
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#db2777";
-        ctx.font = fontSize + "px monospace";
-
-        for (let i = 0; i < drops.length; i++) {
-            const charIndex = Math.floor(drops[i]) % matrixMessage.length;
-            const safeCharIndex = charIndex < 0 ? 0 : charIndex;
-            const text = matrixMessage.charAt(safeCharIndex);
-            
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0;
-            }
-            drops[i]++;
-        }
-    }
-
-    const matrixInterval = setInterval(drawMatrix, 33);
-
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
     const countdownElement = document.getElementById('countdown');
     const targetTextElement = document.getElementById('matrix-text');
 
     const applyBeautifulStyle = (el, size) => {
         if (!el) return;
-        el.style.transition = "opacity 0.4s ease-in-out, transform 0.4s ease-in-out";
-        el.style.color = "#db2777"; 
-        el.style.textShadow = "none"; 
-        el.style.fontFamily = "sans-serif";
-        el.style.fontWeight = "900";
-        el.style.textAlign = "center";
+        el.style.opacity = "0";
+        el.style.transform = "scale(0.8)"; 
         
         let finalSize = window.innerWidth < 600 ? size * 0.5 : size;
         el.style.fontSize = finalSize + "px";
+        
+        setTimeout(() => {
+            el.style.opacity = "1";
+            el.style.transform = "scale(1)"; 
+        }, 50);
     };
 
     const changeTextSmoothly = (el, newText, size) => {
@@ -187,16 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             el.innerHTML = newText;
             applyBeautifulStyle(el, size);
-            el.style.opacity = "1";
-            el.style.transform = "scale(1)"; 
         }, 400); 
     };
 
     if (countdownElement) {
         countdownElement.innerText = "3";
         applyBeautifulStyle(countdownElement, 180);
-        countdownElement.style.opacity = "1";
-        countdownElement.style.transform = "scale(1)";
     }
     
     if (targetTextElement) {
@@ -211,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (targetTextElement) {
             targetTextElement.classList.remove('hidden');
-            targetTextElement.style.opacity = "0"; 
-            changeTextSmoothly(targetTextElement, "H A P P Y", 100);
+            targetTextElement.innerHTML = "H A P P Y";
+            applyBeautifulStyle(targetTextElement, 100);
         }
     }, 3000);
 
@@ -221,20 +194,20 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => changeTextSmoothly(targetTextElement, "M A L A K H A T", 80), 7500);
 
     setTimeout(() => {
-        clearInterval(matrixInterval);
         const matrixScreen = document.getElementById('matrix-screen');
         const galleryScreen = document.getElementById('gallery-screen');
         
         if (matrixScreen && galleryScreen) {
-            matrixScreen.style.transition = "opacity 0.8s ease-in-out";
             matrixScreen.style.opacity = "0";
             
             setTimeout(() => {
-                matrixScreen.style.display = 'none';
+                matrixScreen.classList.replace('active', 'hidden');
                 galleryScreen.classList.replace('hidden', 'active');
                 
-                typeWriter('text-cover', TEXTS.cover, 40);
-            }, 800);
+                const sharedText = document.getElementById('shared-text');
+                if (sharedText) sharedText.classList.add('visible');
+                typeWriter('shared-text', TEXTS.cover, 40);
+            }, 1000);
         }
     }, 9500);
 });
