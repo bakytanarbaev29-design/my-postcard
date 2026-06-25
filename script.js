@@ -28,15 +28,14 @@ function typeWriter(elementId, text, speed = 40) {
     }, speed);
 }
 
-// ОБЪЕДИНЕННАЯ ФУНКЦИЯ ПЕРЕЛИСТЫВАНИЯ И ЗАПУСКА МУЗЫКИ
+// ФУНКЦИЯ ПЕРЕЛИСТЫВАНИЯ КНИГИ
 window.turnPage = function() {
-    // 1. Запуск музыки
+    // Резервный запуск музыки при клике (если браузер заблокировал автостарт)
     const music = document.getElementById('bg-music');
     if (music && music.paused) {
         music.play().catch(error => console.log("Браузер ожидает взаимодействия", error));
     }
 
-    // 2. Логика перелистывания книги
     const p1 = document.getElementById('p1');
     const p2 = document.getElementById('p2');
     const book = document.getElementById('book');
@@ -173,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => changeTextSmoothly(targetTextElement, "T O", 90), 6000);
     setTimeout(() => changeTextSmoothly(targetTextElement, "M A L A K H A T", 80), 7500);
 
-    // Плавный переход к книге
+    // ПЛАВНЫЙ ПЕРЕХОД К КНИГЕ И АВТОМАТИЧЕСКИЙ ЗАПУСК МУЗЫКИ
     setTimeout(() => {
         clearInterval(matrixInterval);
         const matrixScreen = document.getElementById('matrix-screen');
@@ -186,6 +185,14 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 matrixScreen.style.display = 'none';
                 galleryScreen.classList.replace('hidden', 'active');
+                
+                // Включаем музыку автоматически в момент появления книги
+                const music = document.getElementById('bg-music');
+                if (music && music.paused) {
+                    music.play().catch(error => {
+                        console.log("Автоплей заблокирован браузером. Музыка включится при клике.", error);
+                    });
+                }
                 
                 typeWriter('text-cover', TEXTS.cover, 40);
             }, 800);
