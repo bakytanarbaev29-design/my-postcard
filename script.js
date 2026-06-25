@@ -1,6 +1,6 @@
 let bookStep = 0;
 
-// НАСТРОЙКА ТЕКСТОВ ДЛЯ СТРАНИЦ КНИГИ (Здесь вы можете вписать всё, что захотите)
+// НАСТРОЙКА ТЕКСТОВ ДЛЯ СТРАНИЦ КНИГИ
 const TEXTS = {
     cover: "Для Малахат! Нажми, чтобы открыть книгу воспоминаний... ✨",
     page1Back: "Каждый день рядом с тобой приносит невероятную радость и тепло. 💕",
@@ -28,8 +28,15 @@ function typeWriter(elementId, text, speed = 40) {
     }, speed);
 }
 
-// Логика перелистывания книги
+// ОБЪЕДИНЕННАЯ ФУНКЦИЯ ПЕРЕЛИСТЫВАНИЯ И ЗАПУСКА МУЗЫКИ
 window.turnPage = function() {
+    // 1. Запуск музыки
+    const music = document.getElementById('bg-music');
+    if (music && music.paused) {
+        music.play().catch(error => console.log("Браузер ожидает взаимодействия", error));
+    }
+
+    // 2. Логика перелистывания книги
     const p1 = document.getElementById('p1');
     const p2 = document.getElementById('p2');
     const book = document.getElementById('book');
@@ -39,7 +46,6 @@ window.turnPage = function() {
         if (p1) p1.classList.add('flipped');
         bookStep = 1;
         
-        // Запускаем печать текста для нового разворота
         setTimeout(() => {
             typeWriter('text-p1-back', TEXTS.page1Back, 40);
             typeWriter('text-p2-front', TEXTS.page2Front, 40);
@@ -49,7 +55,6 @@ window.turnPage = function() {
         if (p2) p2.classList.add('flipped');
         bookStep = 2;
         
-        // Запускаем печать текста для последней страницы
         setTimeout(() => {
             typeWriter('text-p2-back', TEXTS.page2Back, 40);
         }, 500);
@@ -117,8 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyBeautifulStyle = (el, size) => {
         if (!el) return;
         el.style.transition = "opacity 0.4s ease-in-out, transform 0.4s ease-in-out";
-        el.style.color = "#db2777"; // Обычный розовый цвет
-        el.style.textShadow = "none"; // Без свечения
+        el.style.color = "#db2777";
+        el.style.textShadow = "none";
         el.style.fontFamily = "sans-serif";
         el.style.fontWeight = "900";
         el.style.textAlign = "center";
@@ -182,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 matrixScreen.style.display = 'none';
                 galleryScreen.classList.replace('hidden', 'active');
                 
-                // Печатаем первый текст на обложке СРАЗУ, как только открылась книга
                 typeWriter('text-cover', TEXTS.cover, 40);
             }, 800);
         }
