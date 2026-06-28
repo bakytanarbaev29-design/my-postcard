@@ -1,6 +1,6 @@
 let bookStep = 0;
 
-// НАСТРОЙКА ТЕКСТОВ ДЛЯ СТРАНИЦ КНИГИ
+// НАСТРОЙКА ТЕКСТОВ ДЛЯ СТРАНИЦ КНИГИ (Здесь вы можете вписать всё, что захотите)
 const TEXTS = {
     cover: "Для Малахат! Нажми, чтобы открыть книгу воспоминаний... ✨",
     page1Back: "Каждый день рядом с тобой приносит невероятную радость и тепло. 💕",
@@ -30,12 +30,6 @@ function typeWriter(elementId, text, speed = 40) {
 
 // Логика перелистывания книги
 window.turnPage = function() {
-    // Резервный запуск музыки при клике на саму книгу
-    const music = document.getElementById('bg-music');
-    if (music && music.paused) {
-        music.play().catch(error => console.log("Браузер ожидает взаимодействия", error));
-    }
-
     const p1 = document.getElementById('p1');
     const p2 = document.getElementById('p2');
     const book = document.getElementById('book');
@@ -188,45 +182,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 matrixScreen.style.display = 'none';
                 galleryScreen.classList.replace('hidden', 'active');
                 
-                // Автозапуск музыки при переходе к книге
-                const music = document.getElementById('bg-music');
-                if (music && music.paused) {
-                    music.play().catch(error => {
-                        console.log("Автоплей заблокирован браузером. Музыка включится при клике.", error);
-                    });
-                }
-                
                 // Печатаем первый текст на обложке СРАЗУ, как только открылась книга
                 typeWriter('text-cover', TEXTS.cover, 40);
             }, 800);
         }
     }, 9500);
 });
-
-// ОБРАБОТЧИК КЛИКА НА КНОПКУ ВКЛЮЧЕНИЯ ЗВУКА
-const soundBtn = document.getElementById('sound-btn');
-if (soundBtn) {
-    soundBtn.addEventListener('click', function() {
-        const music = document.getElementById('bg-music');
-        if (music) {
-            music.volume = 0.6;
-            music.play()
-                .then(() => {
-                    // Изменяем текст кнопки, когда музыка успешно заиграла
-                    this.innerHTML = "🎵 Звук включен!";
-                    this.style.background = "#22c55e"; // Зеленый цвет успеха
-                    this.style.boxShadow = "0 0 15px rgba(34, 197, 94, 0.6)";
-                    
-                    // Через 2 секунды плавно скрываем кнопку
-                    setTimeout(() => {
-                        this.style.transition = "opacity 0.5s ease";
-                        this.style.opacity = "0";
-                        setTimeout(() => this.style.display = 'none', 500);
-                    }, 2000);
-                })
-                .catch(error => {
-                    console.log("Ошибка воспроизведения:", error);
-                });
-        }
-    });
-}
