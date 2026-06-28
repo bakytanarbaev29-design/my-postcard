@@ -30,7 +30,7 @@ function typeWriter(elementId, text, speed = 40) {
 
 // ФУНКЦИЯ ПЕРЕЛИСТЫВАНИЯ КНИГИ
 window.turnPage = function() {
-    // Резервный запуск музыки при клике (если браузер заблокировал автостарт)
+    // Резервный запуск музыки при клике на саму книгу
     const music = document.getElementById('bg-music');
     if (music && music.paused) {
         music.play().catch(error => console.log("Браузер ожидает взаимодействия", error));
@@ -42,7 +42,9 @@ window.turnPage = function() {
     
     if (bookStep === 0) {
         if (book) book.classList.add('opened');
-        if (p1) p1.classList.add('flipped');
+        // Перелистываем обложку (она же p1 в логике CSS)
+        const cover = document.getElementById('cover');
+        if (cover) cover.classList.add('flipped');
         bookStep = 1;
         
         setTimeout(() => {
@@ -51,20 +53,29 @@ window.turnPage = function() {
         }, 500);
 
     } else if (bookStep === 1) {
-        if (p2) p2.classList.add('flipped');
+        if (p1) p1.classList.add('flipped');
         bookStep = 2;
+
+    } else if (bookStep === 2) {
+        if (p2) p2.classList.add('flipped');
+        bookStep = 3;
         
         setTimeout(() => {
             typeWriter('text-p2-back', TEXTS.page2Back, 40);
         }, 500);
 
-    } else if (bookStep === 2) {
+    } else if (bookStep === 3) {
         const galleryScreen = document.getElementById('gallery-screen');
         const heartScreen = document.getElementById('heart-screen');
         
         if (galleryScreen && heartScreen) {
-            galleryScreen.style.display = 'none';
-            heartScreen.classList.replace('hidden', 'active');
+            galleryScreen.style.transition = "opacity 0.8s ease-in-out";
+            galleryScreen.style.opacity = "0";
+            
+            setTimeout(() => {
+                galleryScreen.style.display = 'none';
+                heartScreen.classList.replace('hidden', 'active');
+            }, 800);
         }
     }
 };
@@ -172,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => changeTextSmoothly(targetTextElement, "T O", 90), 6000);
     setTimeout(() => changeTextSmoothly(targetTextElement, "M A L A K H A T", 80), 7500);
 
-    // ПЛАВНЫЙ ПЕРЕХОД К КНИГЕ И АВТОМАТИЧЕСКИЙ ЗАПУСК МУЗЫКИ
+    // ПЛАВНЫЙ ПЕРЕХОД К КНИГЕ
     setTimeout(() => {
         clearInterval(matrixInterval);
         const matrixScreen = document.getElementById('matrix-screen');
@@ -186,11 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 matrixScreen.style.display = 'none';
                 galleryScreen.classList.replace('hidden', 'active');
                 
-                // Включаем музыку автоматически в момент появления книги
+                // Автозапуск музыки при переходе к книге
                 const music = document.getElementById('bg-music');
                 if (music && music.paused) {
                     music.play().catch(error => {
-                        console.log("Автоплей заблокирован браузером. Музыка включится при клике.", error);
+                        console.log("Автоплей заблокирован браузером. Звук включится кнопкой или кликом.", error);
                     });
                 }
                 
@@ -198,4 +209,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 800);
         }
     }, 9500);
+});
+
+// ОБРАБОТЧИК КЛИКА НА КНОПКУ ВКЛЮЧЕНИЯ ЗВУКА
+document.getElementById('sound-btn').addEventListener('click', function() {
+    const music = document.getElementById('bg-music');
+    if (music) {
+        music.volume = 0.6;
+        music.play()
+            .then(() => {
+                // Если заиграло — перекрашиваем кнопку в зеленую галочку
+                this.innerHTML = "🎵 Звук включен!";
+                this.style.background = "#22c55e"; 
+                this.style.boxShadow = "0 0 15px rgba(34, 197, 94, 0.6)";
+                
+                // Исчезновение кнопки через 2 секунды
+                setTimeout(() => {
+                    this.style.transition = "opacity 0.5s ease";
+                    this.style.opacity = "0";
+                    setTimeout(() => this.style.display = 'none', 500);
+                }, 2000);
+            })
+            .catch(error => {
+                console.log("Ошибка воспроизведения звука:", error);
+            });
+    }
 });
