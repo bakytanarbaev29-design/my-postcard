@@ -3,56 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Для Малахат! ❤️</title>
+    <title>С Днем Рождения, Малахат!</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="stars-bg">
-        <div class="stars-layer stars-1"></div>
-        <div class="stars-layer stars-2"></div>
-        <div class="stars-layer stars-3"></div>
-    </div>
+    <audio id="bg-music" loop>
+        <source src="ariana.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="matrix-screen" class="screen active">
         <canvas id="matrix-canvas"></canvas>
         <div id="matrix-content">
             <div id="countdown">3</div>
             <div id="matrix-text" class="hidden">H A P P Y</div>
+            <button id="sound-btn">🔊 Включить звук</button>
         </div>
     </div>
 
     <div id="gallery-screen" class="screen hidden">
         <div class="book-container">
-            <div class="book" id="book" onclick="turnPage()">
+            <div id="book" class="book" onclick="window.turnPage()">
                 
+                <div class="page cover-page" id="cover">
+                    <div class="page-content">
+                        <div id="text-cover"></div>
+                    </div>
+                </div>
+
                 <div class="page" id="p1">
                     <div class="front">
                         <div class="page-content">
-                            <img src="images/1.jpeg" alt="Фото 1">
-                        </div>
-                        <div class="page-footer" id="text-cover"></div> 
+                            </div>
                     </div>
                     <div class="back">
                         <div class="page-content">
-                            <img src="images/2.jpeg" alt="Фото 2">
+                            <p id="text-p1-back"></p>
                         </div>
-                        <div class="page-footer" id="text-p1-back"></div> 
                     </div>
                 </div>
 
                 <div class="page" id="p2">
                     <div class="front">
                         <div class="page-content">
-                            <img src="images/3.jpeg" alt="Фото 3">
+                            <p id="text-p2-front"></p>
                         </div>
-                        <div class="page-footer" id="text-p2-front"></div> 
                     </div>
                     <div class="back">
                         <div class="page-content">
-                            <img src="images/4.jpeg" alt="Фото 4">
+                            <p id="text-p2-back"></p>
                         </div>
-                        <div class="page-footer" id="text-p2-back"></div> 
                     </div>
                 </div>
 
@@ -61,35 +61,11 @@
     </div>
 
     <div id="heart-screen" class="screen hidden">
-        <h2 class="glow-text">❤️</h2>
-        
-        <div class="heart-wrap">
-            <div class="photo-cell p1"><img src="images/1.jpeg" alt="h1"></div>
-            <div class="photo-cell p2"><img src="images/2.jpeg" alt="h2"></div>
-            <div class="photo-cell p3"><img src="images/3.jpeg" alt="h3"></div>
-            <div class="photo-cell p4"><img src="images/4.jpeg" alt="h4"></div>
-            
-            <div class="photo-cell p5"><img src="images/1.jpeg" alt="h5"></div>
-            <div class="photo-cell p6"><img src="images/2.jpeg" alt="h6"></div>
-            <div class="photo-cell p7"><img src="images/3.jpeg" alt="h7"></div>
-            <div class="photo-cell p8"><img src="images/4.jpeg" alt="h8"></div>
-            
-            <div class="photo-cell p9"><img src="images/1.jpeg" alt="h9"></div>
-            <div class="photo-cell p10"><img src="images/2.jpeg" alt="h10"></div>
-            <div class="photo-cell p11"><img src="images/3.jpeg" alt="h11"></div>
-            <div class="photo-cell p12"><img src="images/4.jpeg" alt="h12"></div>
-            
-            <div class="photo-cell p13"><img src="images/1.jpeg" alt="h13"></div>
-            <div class="photo-cell p14"><img src="images/2.jpeg" alt="h14"></div>
-            <div class="photo-cell p15"><img src="images/3.jpeg" alt="h15"></div>
-            <div class="photo-cell p16"><img src="images/4.jpeg" alt="h16"></div>
+        <div class="heart-container">
+            <div class="heart">❤️</div>
+            <h1 class="final-title">С праздником, Малахат! 🎉</h1>
         </div>
     </div>
-
-    <audio id="bg-music" loop>
-        <source src="ariana.mp3" type="audio/mpeg">
-        Ваш браузер не поддерживает аудио.
-    </audio>
 
     <script src="script.js"></script>
 </body>
