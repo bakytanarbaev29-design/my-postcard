@@ -28,7 +28,7 @@ function typeWriter(elementId, text, speed = 40) {
     }, speed);
 }
 
-// ФУНКЦИЯ ПЕРЕЛИСТЫВАНИЯ КНИГИ
+// Логика перелистывания книги
 window.turnPage = function() {
     // Резервный запуск музыки при клике на саму книгу
     const music = document.getElementById('bg-music');
@@ -42,40 +42,31 @@ window.turnPage = function() {
     
     if (bookStep === 0) {
         if (book) book.classList.add('opened');
-        // Перелистываем обложку (она же p1 в логике CSS)
-        const cover = document.getElementById('cover');
-        if (cover) cover.classList.add('flipped');
+        if (p1) p1.classList.add('flipped');
         bookStep = 1;
         
+        // Запускаем печать текста для нового разворота
         setTimeout(() => {
             typeWriter('text-p1-back', TEXTS.page1Back, 40);
             typeWriter('text-p2-front', TEXTS.page2Front, 40);
         }, 500);
 
     } else if (bookStep === 1) {
-        if (p1) p1.classList.add('flipped');
-        bookStep = 2;
-
-    } else if (bookStep === 2) {
         if (p2) p2.classList.add('flipped');
-        bookStep = 3;
+        bookStep = 2;
         
+        // Запускаем печать текста для последней страницы
         setTimeout(() => {
             typeWriter('text-p2-back', TEXTS.page2Back, 40);
         }, 500);
 
-    } else if (bookStep === 3) {
+    } else if (bookStep === 2) {
         const galleryScreen = document.getElementById('gallery-screen');
         const heartScreen = document.getElementById('heart-screen');
         
         if (galleryScreen && heartScreen) {
-            galleryScreen.style.transition = "opacity 0.8s ease-in-out";
-            galleryScreen.style.opacity = "0";
-            
-            setTimeout(() => {
-                galleryScreen.style.display = 'none';
-                heartScreen.classList.replace('hidden', 'active');
-            }, 800);
+            galleryScreen.style.display = 'none';
+            heartScreen.classList.replace('hidden', 'active');
         }
     }
 };
@@ -132,8 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyBeautifulStyle = (el, size) => {
         if (!el) return;
         el.style.transition = "opacity 0.4s ease-in-out, transform 0.4s ease-in-out";
-        el.style.color = "#db2777";
-        el.style.textShadow = "none";
+        el.style.color = "#db2777"; // Обычный розовый цвет
+        el.style.textShadow = "none"; // Без свечения
         el.style.fontFamily = "sans-serif";
         el.style.fontWeight = "900";
         el.style.textAlign = "center";
@@ -183,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => changeTextSmoothly(targetTextElement, "T O", 90), 6000);
     setTimeout(() => changeTextSmoothly(targetTextElement, "M A L A K H A T", 80), 7500);
 
-    // ПЛАВНЫЙ ПЕРЕХОД К КНИГЕ
+    // Плавный переход к книге
     setTimeout(() => {
         clearInterval(matrixInterval);
         const matrixScreen = document.getElementById('matrix-screen');
@@ -201,10 +192,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const music = document.getElementById('bg-music');
                 if (music && music.paused) {
                     music.play().catch(error => {
-                        console.log("Автоплей заблокирован браузером. Звук включится кнопкой или кликом.", error);
+                        console.log("Автоплей заблокирован браузером. Музыка включится при клике.", error);
                     });
                 }
                 
+                // Печатаем первый текст на обложке СРАЗУ, как только открылась книга
                 typeWriter('text-cover', TEXTS.cover, 40);
             }, 800);
         }
@@ -212,26 +204,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ОБРАБОТЧИК КЛИКА НА КНОПКУ ВКЛЮЧЕНИЯ ЗВУКА
-document.getElementById('sound-btn').addEventListener('click', function() {
-    const music = document.getElementById('bg-music');
-    if (music) {
-        music.volume = 0.6;
-        music.play()
-            .then(() => {
-                // Если заиграло — перекрашиваем кнопку в зеленую галочку
-                this.innerHTML = "🎵 Звук включен!";
-                this.style.background = "#22c55e"; 
-                this.style.boxShadow = "0 0 15px rgba(34, 197, 94, 0.6)";
-                
-                // Исчезновение кнопки через 2 секунды
-                setTimeout(() => {
-                    this.style.transition = "opacity 0.5s ease";
-                    this.style.opacity = "0";
-                    setTimeout(() => this.style.display = 'none', 500);
-                }, 2000);
-            })
-            .catch(error => {
-                console.log("Ошибка воспроизведения звука:", error);
-            });
-    }
-});
+const soundBtn = document.getElementById('sound-btn');
+if (soundBtn) {
+    soundBtn.addEventListener('click', function() {
+        const music = document.getElementById('bg-music');
+        if (music) {
+            music.volume = 0.6;
+            music.play()
+                .then(() => {
+                    // Изменяем текст кнопки, когда музыка успешно заиграла
+                    this.innerHTML = "🎵 Звук включен!";
+                    this.style.background = "#22c55e"; // Зеленый цвет успеха
+                    this.style.boxShadow = "0 0 15px rgba(34, 197, 94, 0.6)";
+                    
+                    // Через 2 секунды плавно скрываем кнопку
+                    setTimeout(() => {
+                        this.style.transition = "opacity 0.5s ease";
+                        this.style.opacity = "0";
+                        setTimeout(() => this.style.display = 'none', 500);
+                    }, 2000);
+                })
+                .catch(error => {
+                    console.log("Ошибка воспроизведения:", error);
+                });
+        }
+    });
+}
