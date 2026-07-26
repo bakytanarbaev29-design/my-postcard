@@ -1,16 +1,30 @@
 let bookStep = 0;
+const TOTAL_PAGES = 8;
 
-// НАСТРОЙКА ТЕКСТОВ ДЛЯ СТРАНИЦ КНИГИ
+// НАСТРОЙКА ТЕКСТОВ ДЛЯ СТРАНИЦ КНИГИ (Все 8 разворотов)
 const TEXTS = {
-    cover: "Для Малахат! Нажми, чтобы открыть книгу воспоминаний... ✨",
-    page1Back: "Каждый день рядом с тобой приносит невероятную радость и тепло. 💕",
-    page2Front: "Ты заставляешь этот мир сиять ярче, и я благодарен за каждый миг! 🌸",
-    page2Back: "Пусть все твои самые заветные желания обязательно сбудутся. С праздником! 🎉❤️"
+    cover: "Нажми, чтобы открыть книгу воспоминаний... ✨",
+    p1Back: "Каждое воспоминание - это маленькое сокровище, которое мы будем бережно хранить всю жизнь. 💕",
+    p2Front: "Әр сапар бақытқа толы болсын, ал әр күні жаңа әсер сыйласын! 🌸",
+    p2Back: "С каждым днем наши общие воспоминания становятся всё дороже... 💖",
+    p3Front: "Ты наполняешь жизнь улыбками, смехом и вдохновением! ✨",
+    p3Back: "А теперь просто по настольгируй моментами! 🌹",
+    p4Front: "☀️",
+    p4Back: " 💫",
+    p5Front: " 🌺",
+    p5Back: " ✨",
+    p6Front: " 🌟",
+    p6Back: "Каждое путешествие заканчивается но его воспоминания с нами навсегда! 🎀",
+    p7Front: "Самые красивый страницы этой книгии уже написаны. Но самые счастливые счастливые страницы нашей жизни еще впереди! 🌸",
+    p7Back: "Спасибо тебе что ты есть в моей жизни. Біздің махаббат хикаямыз енді ғана басталады...! 💗",
+    p8Front: "Я люблю Тебя.❤️",
+    p8Back: " HAPPY BIRTDAY BALAPAN🎉❤️"
 };
 
+// Функция эффекта пишущей машинки
 function typeWriter(elementId, text, speed = 40) {
     const element = document.getElementById(elementId);
-    if (!element) return;
+    if (!element || !text) return;
     
     element.innerHTML = ''; 
     let i = 0;
@@ -27,43 +41,61 @@ function typeWriter(elementId, text, speed = 40) {
     }, speed);
 }
 
+// Логика последовательного перелистывания 8 листов книги
 window.turnPage = function() {
-    const p1 = document.getElementById('p1');
-    const p2 = document.getElementById('p2');
-    const book = document.getElementById('book');
-    
-    if (bookStep === 0) {
-        if (book) book.classList.add('opened');
-        if (p1) p1.classList.add('flipped');
-        bookStep = 1;
-        
-        setTimeout(() => {
-            typeWriter('text-p1-back', TEXTS.page1Back, 40);
-            typeWriter('text-p2-front', TEXTS.page2Front, 40);
-        }, 500);
+    if (bookStep < TOTAL_PAGES) {
+        bookStep++;
+        const currentPage = document.getElementById(`p${bookStep}`);
+        if (currentPage) {
+            currentPage.classList.add('flipped');
+        }
 
-    } else if (bookStep === 1) {
-        if (p2) p2.classList.add('flipped');
-        bookStep = 2;
-        
-        setTimeout(() => {
-            typeWriter('text-p2-back', TEXTS.page2Back, 40);
-        }, 500);
-
-    } else if (bookStep === 2) {
+        // Запуск печати текста для открывшегося разворота
+        if (bookStep === 1) {
+            typeWriter('text-p1-back', TEXTS.p1Back);
+            typeWriter('text-p2-front', TEXTS.page2Front || TEXTS.p2Front);
+        } else if (bookStep === 2) {
+            typeWriter('text-p2-back', TEXTS.p2Back);
+            typeWriter('text-p3-front', TEXTS.p3Front);
+        } else if (bookStep === 3) {
+            typeWriter('text-p3-back', TEXTS.p3Back);
+            typeWriter('text-p4-front', TEXTS.p4Front);
+        } else if (bookStep === 4) {
+            typeWriter('text-p4-back', TEXTS.p4Back);
+            typeWriter('text-p5-front', TEXTS.p5Front);
+        } else if (bookStep === 5) {
+            typeWriter('text-p5-back', TEXTS.p5Back);
+            typeWriter('text-p6-front', TEXTS.p6Front);
+        } else if (bookStep === 6) {
+            typeWriter('text-p6-back', TEXTS.p6Back);
+            typeWriter('text-p7-front', TEXTS.p7Front);
+        } else if (bookStep === 7) {
+            typeWriter('text-p7-back', TEXTS.p7Back);
+            typeWriter('text-p8-front', TEXTS.p8Front);
+        } else if (bookStep === 8) {
+            typeWriter('text-p8-back', TEXTS.p8Back);
+        }
+    } else {
+        // Переход к финалу с сердцем
         const galleryScreen = document.getElementById('gallery-screen');
         const heartScreen = document.getElementById('heart-screen');
         
         if (galleryScreen && heartScreen) {
-            galleryScreen.style.display = 'none';
-            heartScreen.classList.replace('hidden', 'active');
+            galleryScreen.style.transition = "opacity 0.8s ease-in-out";
+            galleryScreen.style.opacity = "0";
+            
+            setTimeout(() => {
+                galleryScreen.style.display = 'none';
+                heartScreen.classList.replace('hidden', 'active');
+            }, 800);
         }
     }
 };
 
+// Запуск анимаций и логика звука
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- СИСТЕМА АВТОЗАПУСКА И КНОПКА ЗВУКА ---
+    // --- ИНТЕЛЛЕКТУАЛЬНАЯ СИСТЕМА ЗАПУСКА МУЗЫКИ ---
     const music = document.getElementById('bg-music');
     const soundBtn = document.getElementById('sound-btn');
 
@@ -72,18 +104,19 @@ document.addEventListener('DOMContentLoaded', () => {
             music.volume = 0.6;
             music.play().then(() => {
                 if (soundBtn) soundBtn.style.display = 'none';
-            }).catch(e => console.log("Браузер ждет клика пользователя", e));
+            }).catch(e => console.log("Браузер ожидает активности пользователя...", e));
         }
     }
 
-    // Попытка сразу
+    // Попытка 1: Сразу при загрузке кода
     tryPlayMusic();
 
-    // Попытка при любом клике по экрану
+    // Попытка 2: При первом клике в любую область экрана
     document.body.addEventListener('click', () => {
         tryPlayMusic();
     }, { once: true });
 
+    // Попытка 3: Ручное нажатие на розовую кнопку
     if (soundBtn) {
         soundBtn.addEventListener('click', function(e) {
             e.stopPropagation(); 
@@ -99,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- МАТРИЦА ---
+    // --- МАТРИЦА И ОТСЧЕТ ---
     const canvas = document.getElementById('matrix-canvas');
     if (!canvas) return;
     
@@ -143,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.height = window.innerHeight;
     });
 
-    // --- АНИМАЦИЯ ТЕКСТА ---
     const countdownElement = document.getElementById('countdown');
     const targetTextElement = document.getElementById('matrix-text');
 
@@ -201,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => changeTextSmoothly(targetTextElement, "T O", 90), 6000);
     setTimeout(() => changeTextSmoothly(targetTextElement, "M A L A K H A T", 80), 7500);
 
+    // Переход к книге
     setTimeout(() => {
         clearInterval(matrixInterval);
         const matrixScreen = document.getElementById('matrix-screen');
@@ -213,6 +246,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 matrixScreen.style.display = 'none';
                 galleryScreen.classList.replace('hidden', 'active');
+                
+                // Дублирующий запуск музыки перед началом книги
+                tryPlayMusic();
                 
                 typeWriter('text-cover', TEXTS.cover, 40);
             }, 800);

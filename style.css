@@ -73,7 +73,7 @@ body, html {
 .hidden { display: none !important; }
 .active { opacity: 1 !important; z-index: 10 !important; }
 
-/* ЭКРАН 1: МАТРИЦА И ТОЧЕЧНЫЙ ОТСЧЕТ */
+/* ЭКРАН 1: МАТРИЦА */
 #matrix-screen {
     background-color: transparent;
 }
@@ -208,12 +208,26 @@ body, html {
     justify-content: center;
 }
 
-#p1 { z-index: 3; }
-#p2 { z-index: 2; }
-#p1.flipped { transform: rotateY(-180deg); z-index: 2; }
-#p2.flipped { transform: rotateY(-180deg); z-index: 3; }
+/* Настройка глубины слоев для 8 листов книги */
+#p1 { z-index: 8; }
+#p2 { z-index: 7; }
+#p3 { z-index: 6; }
+#p4 { z-index: 5; }
+#p5 { z-index: 4; }
+#p6 { z-index: 3; }
+#p7 { z-index: 2; }
+#p8 { z-index: 1; }
 
-/* ЭКРАН 3: ПУСТОЕ СЕРДЦЕ */
+#p1.flipped { z-index: 1; transform: rotateY(-180deg); }
+#p2.flipped { z-index: 2; transform: rotateY(-180deg); }
+#p3.flipped { z-index: 3; transform: rotateY(-180deg); }
+#p4.flipped { z-index: 4; transform: rotateY(-180deg); }
+#p5.flipped { z-index: 5; transform: rotateY(-180deg); }
+#p6.flipped { z-index: 6; transform: rotateY(-180deg); }
+#p7.flipped { z-index: 7; transform: rotateY(-180deg); }
+#p8.flipped { z-index: 8; transform: rotateY(-180deg); }
+
+/* ЭКРАН 3: ФИНАЛЬНОЕ СЕРДЦЕ */
 #heart-screen {
     background-color: transparent;
     overflow: hidden;
@@ -289,6 +303,7 @@ body, html {
     100% { transform: scale(1.4); }
 }
 
+/* Мобильная адаптация */
 @media (max-width: 520px) {
     .book-container { width: 90vw; height: 65vw; }
     .book { width: 45vw; }
