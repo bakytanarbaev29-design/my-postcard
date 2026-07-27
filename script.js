@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => changeTextSmoothly(targetTextElement, "B I R T H D A Y", 65), 4500);
     setTimeout(() => changeTextSmoothly(targetTextElement, "T O", 65), 6000);
-    setTimeout(() => changeTextSmoothly(targetTextElement, "M A L A K H A T", 65), 7500);
+    setTimeout(() => changeTextSmoothly(targetTextElement, "M A L A K H A T", 60), 7500);
 
     // Переход к книге
     setTimeout(() => {
